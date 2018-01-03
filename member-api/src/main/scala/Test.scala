@@ -1,10 +1,10 @@
 import com.today.api.user._
-import com.today.api.user.request.BlackUserRequest
+import com.today.api.user.request.{ RegisterUserRequest}
 
 object Test extends App {
 
   override def main(args: Array[String]): Unit = {
-    val res = UserServiceClient.blackUser(BlackUserRequest("1724555319@com","1724555319"))
+    val res = UserServiceClient.registerUser(RegisterUserRequest("lisi","A12345678","15750174634"))
     println(res)
   }
 }
