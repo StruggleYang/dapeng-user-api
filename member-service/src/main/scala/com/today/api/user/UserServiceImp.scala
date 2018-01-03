@@ -1,8 +1,9 @@
-package com.today.soa
+package com.today.api.user
 
+import com.today.api.user.service.UserService
+import com.today.api.user.enums.UserStatusEnum
 import com.today.api.user.request._
 import com.today.api.user.response._
-import com.today.api.user.service.UserService
 
 class UserServiceImp extends UserService{
   /**
@@ -41,7 +42,9 @@ class UserServiceImp extends UserService{
     *1.user_response.RegisterUserResponse
     *
     **/
-  override def registerUser(request: RegisterUserRequest): RegisterUserResponse = ???
+  override def registerUser(request: RegisterUserRequest): RegisterUserResponse = {
+    RegisterUserResponse("username","15717111111",UserStatusEnum.ACTIVATED,123L)
+  }
 
   /**
     *
@@ -77,7 +80,9 @@ class UserServiceImp extends UserService{
     *1.user_response.LoginUserResponse
     *
     **/
-  override def login(request: LoginUserRequest): LoginUserResponse = ???
+  override def login(request: LoginUserRequest): LoginUserResponse = {
+    LoginUserResponse("username","15717111111",UserStatusEnum.ACTIVATED,20,123,123)
+  }
 
   /**
     *
@@ -115,7 +120,9 @@ class UserServiceImp extends UserService{
     *1.user_response.ModifyUserAction
     *
     **/
-  override def modifyUser(request: ModifyUserRequest): ModifyUserResponse = ???
+  override def modifyUser(request: ModifyUserRequest): ModifyUserResponse = {
+    ModifyUserResponse("username","15717111111",UserStatusEnum.ACTIVATED,20)
+  }
 
   /**
     *
@@ -149,7 +156,9 @@ class UserServiceImp extends UserService{
     *1.user_response.FreezeUserResponse
     *
     **/
-  override def freezeUser(request: FreezeUserRequest): FreezeUserResponse = ???
+  override def freezeUser(request: FreezeUserRequest): FreezeUserResponse = {
+    FreezeUserResponse("111",UserStatusEnum.ACTIVATED,"违规操作")
+  }
 
   /**
     *
@@ -184,7 +193,9 @@ class UserServiceImp extends UserService{
     *1.user_response.BlackUserResponse
     *
     **/
-  override def blackUser(request: BlackUserRequest): BlackUserResponse = ???
+  override def blackUser(request: BlackUserRequest): BlackUserResponse = {
+    BlackUserResponse("111",UserStatusEnum.ACTIVATED,"脏话")
+  }
 
   /**
     *
@@ -219,5 +230,8 @@ class UserServiceImp extends UserService{
     *1. i32 流水 Id
     *
     **/
-  override def changeUserIntegral(request: ChangeIntegralRequest): Int = ???
+  override def changeUserIntegral(request: ChangeIntegralRequest): Int = {
+    val res:Int = 2018010345
+    res
+  }
 }

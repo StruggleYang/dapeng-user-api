@@ -22,7 +22,8 @@ lazy val api = (project in file("member-api"))
     name := "member-api",
     libraryDependencies ++= Seq(
       "com.isuwang" % "dapeng-remoting-api" % "1.3.0",
-      "com.isuwang" % "dapeng-remoting-netty" % "1.3.0"
+      "com.isuwang" % "dapeng-remoting-netty" % "1.3.0",
+      "com.isuwang" % "dapeng-registry-zookeeper" % "1.3.0"
     )
   ).enablePlugins(ThriftGeneratorPlugin)
 
@@ -42,7 +43,6 @@ lazy val service = (project in file("member-service"))
       "mysql" % "mysql-connector-java" % "5.1.36",
       "com.alibaba" % "druid" % "1.0.17",
       "org.springframework" % "spring-context" % "4.2.4.RELEASE",
-      "com.isuwang" % "dapeng-registry-zookeeper" % "1.3.0",
       "com.isuwang" % "dapeng-remoting-netty" % "1.3.0"
     )).enablePlugins(ImageGeneratorPlugin)
     .enablePlugins(DbGeneratorPlugin)
