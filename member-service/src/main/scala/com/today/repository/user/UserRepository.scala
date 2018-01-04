@@ -29,10 +29,10 @@ class UserRepository {
     * @param request
     * @return
     */
-  def registerUser(request: RegisterUserRequest): RegisterUserResponse = {
+  def registerUser(request: RegisterUserRequest): Option[RegisterUserResponse] = {
     try {
-      val res = dataSource.executeUpdate(sql"INSERT INTO user (user_name,password,telephone,integral,user_status,is_deleted,created_at,updated_at,created_by,updated_by) VALUES (${request.userName},${request.passWord},${request.telephone},0,0,0,${new Date},${new Date},000,000)")
-      queryUserByName(request.userName)
+      dataSource.executeUpdate(sql"INSERT INTO user (user_name,password,telephone,integral,user_status,is_deleted,created_at,updated_at,created_by,updated_by) VALUES (${request.userName},${request.passWord},${request.telephone},0,0,0,${new Date},${new Date},000,000)")
+        queryUserByName(request.userName)
     } catch {
       case _: MySQLIntegrityConstraintViolationException => throw new SoaException("666", "手机号已被使用")
     }
@@ -44,10 +44,15 @@ class UserRepository {
     * @param content
     * @return
     */
-  def queryUserByName(content: String) = {
-    val res = dataSource.row[Users](sql"SELECT * FROM user WHERE user_name  = ${content}")
-    res match{
-      case _ => RegisterUserResponse(res.get.user_name, res.get.telephone, findByValue(res.get.user_status), res.get.created_at.getTime)
+  def queryUserByName(content: String):Option[RegisterUserResponse] = {
+    val data = dataSource.row[Users](sql"SELECT * FROM user WHERE user_name  = ${content}")
+    data match {
+      case None => None
+      case _ => Some(RegisterUserResponse(
+        data.get.user_name,
+        data.get.telephone,
+        findByValue(data.get.user_status),
+        data.get.created_at.getTime))
     }
   }
 
@@ -57,25 +62,37 @@ class UserRepository {
     * @param content
     * @return
     */
-  def checkUserByName(content: String)= {
-   dataSource.rows[Users](sql"SELECT * FROM user WHERE user_name  = ${content}")
+  def checkUserByName(content: String):Boolean= {
+   dataSource
+     .rows[Users](sql"SELECT * FROM user WHERE user_name  = ${content}")
+     .isEmpty
   }
 
   /**
     * 修改用户账号状态
     */
   def updateUserStatus(status:UserStatusEnum): Unit ={
-    dataSource.executeUpdate(sql"update user set user_status where id = ${status.id}")
+    dataSource
+      .executeUpdate(sql"update user set user_status where id = ${status.id}")
   }
 
   /**
     *
     * 登录
     */
-  def queryUserByNameAndPwd(request: LoginUserRequest):LoginUserResponse ={
+  def queryUserByNameAndPwd(request: LoginUserRequest):Option[LoginUserResponse] ={
     val res = dataSource.row[Users](sql"select *  from user where telephone = ${request.telephone} and password =${request.passWord}")
-    res match{
-      case _ => LoginUserResponse(res.get.user_name, res.get.telephone, findByValue(res.get.user_status),res.get.integral, res.get.created_at.getTime,res.get.updated_at.getTime,res.get.email,res.get.qq)
+    res match {
+      case None => None
+      case _ => Some(LoginUserResponse(
+      res.get.user_name,
+      res.get.telephone,
+      findByValue(res.get.user_status),
+      res.get.integral,
+      res.get.created_at.getTime,
+      res.get.updated_at.getTime,
+      res.get.email,
+      res.get.qq))
     }
   }
 }

@@ -5,6 +5,8 @@ import com.today.api.user.request.{LoginUserRequest, RegisterUserRequest}
 import com.today.api.user.service.UserService
 import org.springframework.context.support.ClassPathXmlApplicationContext
 
+import scala.io.StdIn
+
 /**
   * author: HuaZhe Ray
   *
@@ -27,13 +29,30 @@ object Test {
     context.start();
 
     val service:UserService = classOf[UserService].cast(context.getBean("userService"))
-
-    val res = service.login(LoginUserRequest("A12345678","15750174634"))
-
-    println(res)
-
-
+    // 注册
+    /*registerUser(service)*/
+    //val res = service.registerUser(RegisterUserRequest("张三","a12345678","1562345679"))
+    // 登陆
+    val res = service.login(LoginUserRequest("a12345678","1562345679"))
+    msg(res)
 
   }
+
+  def msg(res:Any):Unit = {
+    println("=============================[响应消息]=====================================")
+    println("===>"+res)
+    println("==================================================================end")
+  }
+
+/*  def  registerUser(service:UserService) = {
+    println("==========================注册")
+    println("========用户名:")
+    val name = StdIn.readLine()
+    println("========密码:")
+    val pwd = StdIn.readLine()
+    println("========用户名:")
+    val tel = StdIn.readLine()
+    val res = service.registerUser(RegisterUserRequest(name,pwd,tel))
+  }*/
 
 }

@@ -2,7 +2,7 @@
 <service namespace="com.today.api.user.service" name="UserService">
     <meta>
         <version>1.0.0</version>
-        <timeout>30000</timeout>
+        <timeout>50000</timeout>
     </meta>
     <methods>
         <method name="registerUser">

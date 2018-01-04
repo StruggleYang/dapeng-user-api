@@ -51,15 +51,19 @@ class UserServiceImp extends UserService{
     *
     **/
   override def registerUser(request: RegisterUserRequest): RegisterUserResponse = {
-    val checkUse = userRepository.checkUserByName(request.userName).isEmpty
+    val checkUse = userRepository.checkUserByName(request.userName)
     val checkName = UserUtil.checkName(request.userName)
     val checkPwd =UserUtil.checkPwd(request.passWord)
     val checkTel = UserUtil.checkPwd(request.telephone)
     if (checkUse&&checkName&&checkPwd&&checkTel) {
       try {
-        userRepository.registerUser(request)
+        val sc = userRepository.registerUser(request)
+        sc match {
+          case None => throw new SoaException("888","注册失败")
+          case _ => sc.get
+        }
       }catch {
-        case _:MySQLIntegrityConstraintViolationException => throw new SoaException("666","手机号已被使用")
+        case ms:MySQLIntegrityConstraintViolationException => throw new SoaException("777","手机号已被使用")
       }
     } else {
       throw new SoaException("666","请求参数有误，检查用户名和密码填写正确")
@@ -101,8 +105,11 @@ class UserServiceImp extends UserService{
     *
     **/
   override def login(request: LoginUserRequest): LoginUserResponse = {
-    userRepository.queryUserByNameAndPwd(request)
-    LoginUserResponse("username","15717111111",UserStatusEnum.ACTIVATED,20,123,123)
+    val sc  = userRepository.queryUserByNameAndPwd(request)
+    sc match {
+      case None=> throw new SoaException("888","登录失败")
+      case _ => sc.get
+    }
   }
 
   /**
