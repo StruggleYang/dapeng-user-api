@@ -9,7 +9,6 @@ import com.today.api.user.enums.UserStatusEnum.{findByValue, _}
 import com.today.api.user.request.{LoginUserRequest, ModifyUserRequest, RegisterUserRequest}
 import com.today.api.user.response.{LoginUserResponse, ModifyUserResponse, RegisterUserResponse}
 import wangzx.scala_commons.sql._
-import java.text.SimpleDateFormat
 
 import com.isuwang.dapeng.core.SoaException
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Component
 class UserRepository {
   @Resource(name = "crm_dataSource")
   var dataSource: DataSource = _
-
-  val formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
   /**
     * 注册用户
@@ -117,76 +114,85 @@ class UserRepository {
     /**
       * 完善资料，成为权属会员
       */
-    val data = dataSource.executeUpdate(sql"update user set email = ${request.email} , qq = ${request.qq},user_status = ${UserStatusEnum.DATA_PERFECTED.id},updated_at = ${new Date},updated_by = ${request.userId} where id = ${request.userId}")
+    val data = dataSource.executeUpdate(
+      sql"""update user set email = ${request.email} , qq = ${request.qq},user_status = ${UserStatusEnum.DATA_PERFECTED.id},
+           updated_at = ${new Date},updated_by = ${request.userId} where id = ${request.userId}""")
 
     if (data != 0) {
-        val userInfo = queryUserById(request.userId)
-        userInfo match {
-          case None => None
-          case _ => Some(
-            ModifyUserResponse(
-              userInfo.get.user_name,
-              userInfo.get.telephone,
-              UserStatusEnum.findByValue(userInfo.get.user_status),
-              userInfo.get.updated_at.getTime,
-              userInfo.get.email,
-              userInfo.get.qq)
-          )
-        }
+      val userInfo = queryUserById(request.userId)
+      userInfo match {
+        case None => None
+        case _ => Some(
+          ModifyUserResponse(
+            userInfo.get.user_name,
+            userInfo.get.telephone,
+            UserStatusEnum.findByValue(userInfo.get.user_status),
+            userInfo.get.updated_at.getTime,
+            userInfo.get.email,
+            userInfo.get.qq)
+        )
+      }
     } else {
       throw new SoaException("777", "更新资料失败")
     }
   }
 
   /**
-    *  增加积分
-    * @param userId 用户id
-    * @param increment 增加的积分值
-    * @param integralType 积分流水类型
+    * 增加积分
+    *
+    * @param userId         用户id
+    * @param increment      增加的积分值
+    * @param integralType   积分流水类型
     * @param integralSource 积分来源
+    * @param mark           可选状态变更备注,如果不写则是状态的描述
     */
   def changeUserIntegral(
-                          userId:String,
-                         increment:Int,
-                         integralType:IntegralTypeEnum,
-                         integralSource:IntegralSourceEnum,
-                          mark:String *):Boolean ={
+                          userId: String,
+                          increment: Int,
+                          integralType: IntegralTypeEnum,
+                          integralSource: IntegralSourceEnum,
+                          mark: String*): Boolean = {
 
     var _mark = integralSource.name
-    if(mark.nonEmpty&&mark.length==1){
+    if (mark.nonEmpty && mark.length == 1) {
       _mark = mark(0)
-    }else{
-      for(m <- mark) _mark += m
+    } else {
+      for (m <- mark) _mark += m
     }
 
     val Int_log = dataSource.executeUpdate(
       sql"UPDATE user SET integral = integral+${increment}, updated_at = ${new Date} ,updated_by = ${userId} WHERE  id = ${userId} ")
     // 当前的积分
     val curr_Integral = queryUserById(userId).get.integral
+
     // 插入一条积分流水
     val journal_res = dataSource.executeUpdate(
       sql"""INSERT INTO integral_journal (user_id, integral_type, integral_price, integral_source, integral, created_at, created_by, updated_at, updated_by, remark)
                VALUES (${userId},${integralType.id},${increment},${integralSource.id},
             ${curr_Integral},${new Date},${userId},${new Date},${userId},${_mark}) """
     )
-    journal_res!=0
+    journal_res != 0
   }
 
   /**
-    *  更新用户状态
-    * @param userId 用户id
+    * 更新用户状态
+    *
+    * @param userId         用户id
     * @param userStatusEnum 用户状态
-    *  @param mark 可选状态变更备注,如果不写则是状态的描述
+    * @param mark           可选状态变更备注,如果不写则是状态的描述
     * @return
     */
-  def updateUserStaus(userId:String,userStatusEnum: UserStatusEnum,mark:String *): Boolean = {
+  def updateUserStaus(userId: String, userStatusEnum: UserStatusEnum, mark: String*): Boolean = {
+
     var _mark = userStatusEnum.name
-    if(mark.nonEmpty&&mark.length==1){
+    if (mark.nonEmpty && mark.length == 1) {
       _mark = mark(0)
-    }else{
-      for(m <- mark) _mark += m
+    } else {
+      for (m <- mark) _mark += m
     }
-    dataSource.executeUpdate(sql"""update user set user_status = ${userStatusEnum.id} , remark = ${_mark},updated_by = 111,updated_at = ${new Date} where id = ${userId}""") != 0
+
+    dataSource.executeUpdate(
+      sql"""update user set user_status = ${userStatusEnum.id} , remark = ${_mark},updated_by = 111,updated_at = ${new Date} where id = ${userId}""") != 0
   }
 
 }
