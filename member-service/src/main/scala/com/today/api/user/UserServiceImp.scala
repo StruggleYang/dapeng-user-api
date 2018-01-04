@@ -3,7 +3,7 @@ package com.today.api.user
 import com.isuwang.dapeng.core.SoaException
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException
 import com.today.api.user.service.UserService
-import com.today.api.user.enums.UserStatusEnum
+import com.today.api.user.enums.{IntegralSourceEnum, IntegralTypeEnum, UserStatusEnum}
 import com.today.api.user.request._
 import com.today.api.user.response._
 import com.today.repository.user.UserRepository
@@ -159,6 +159,11 @@ class UserServiceImp extends UserService{
     val checkEmail = UserUtil.checkEmail(request.email)
     if (checkQQ&&checkEmail){
       val res = userRepository.updateUserProfile(request)
+
+      // 修改资料的积分，暂时写死，应当定义为枚举
+      val profile_integral:Int = 5
+      // 修改积分及流水,返回修改状态
+      val changeStatus:Boolean = userRepository.changeUserIntegral(request.userId,profile_integral,IntegralTypeEnum.ADD,IntegralSourceEnum.PREFECT_INFORMATION)
       res match {
         case None => throw  new SoaException("777","更新资料失败,未知错误")
         case _ => res.get
@@ -201,7 +206,21 @@ class UserServiceImp extends UserService{
     *
     **/
   override def freezeUser(request: FreezeUserRequest): FreezeUserResponse = {
-    FreezeUserResponse("111",UserStatusEnum.ACTIVATED,"违规操作")
+    /**
+      * 前置检查
+      */
+    val statusList:List[Int] = List(UserStatusEnum.BLACK.id,UserStatusEnum.DELETE.id,UserStatusEnum.FREEZED.id)
+    val checkStatus = statusList.contains(userRepository.queryUserById(request.userId).get.user_status)
+    if (!checkStatus){
+      userRepository.updateUserStaus(request.userId,UserStatusEnum.FREEZED,request.remark)
+      val userData = userRepository.queryUserById(request.userId)
+      userData match {
+        case None => throw  new SoaException("777","此用户不在冻结操作范围内")
+        case _ => FreezeUserResponse(userData.get.id.toString,UserStatusEnum.findByValue(userData.get.user_status),userData.get.remark)
+      }
+    }else{
+      throw  new SoaException("777","此用户不在冻结操作范围内")
+    }
   }
 
   /**
@@ -238,7 +257,22 @@ class UserServiceImp extends UserService{
     *
     **/
   override def blackUser(request: BlackUserRequest): BlackUserResponse = {
-    BlackUserResponse("111",UserStatusEnum.ACTIVATED,"脏话")
+    val statusList:List[Int] = List(UserStatusEnum.BLACK.id,UserStatusEnum.DELETE.id,UserStatusEnum.FREEZED.id)
+    val checkStatus = statusList.contains(userRepository.queryUserById(request.userId).get.user_status)
+    if (!checkStatus){
+      userRepository.updateUserStaus(request.userId,UserStatusEnum.BLACK,request.remark)
+      // 修改资料的积分，暂时写死，应当定义为枚举
+      val profile_integral:Int = -userRepository.queryUserById(request.userId).get.integral
+      // 修改积分及流水,返回修改状态
+      val changeStatus:Boolean = userRepository.changeUserIntegral(request.userId,profile_integral,IntegralTypeEnum.MINUS,IntegralSourceEnum.BLACK,request.remark)
+      val userData = userRepository.queryUserById(request.userId)
+      userData match {
+        case None => throw  new SoaException("777","此用户不在拉黑操作范围内")
+        case _ => BlackUserResponse(userData.get.id.toString,UserStatusEnum.findByValue(userData.get.user_status),userData.get.remark)
+      }
+    }else{
+      throw  new SoaException("777","此用户不在拉黑操作范围内")
+    }
   }
 
   /**
