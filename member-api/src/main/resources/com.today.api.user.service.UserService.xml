@@ -2,7 +2,7 @@
 <service namespace="com.today.api.user.service" name="UserService">
     <meta>
         <version>1.0.0</version>
-        <timeout>50000</timeout>
+        <timeout>30000</timeout>
     </meta>
     <methods>
         <method name="registerUser">
@@ -745,7 +745,16 @@
  修改用户请求体
 </doc>
             <fields>
-                <field tag="1" name="email" optional="false" privacy="false">
+                <field tag="1" name="userId" optional="false" privacy="false">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+ 用户 id
+</doc>
+                </field>
+                <field tag="2" name="email" optional="false" privacy="false">
                     <dataType>
                         <kind>STRING</kind>
                     </dataType>
@@ -754,7 +763,7 @@
  用户邮箱
 </doc>
                 </field>
-                <field tag="2" name="qq" optional="false" privacy="false">
+                <field tag="3" name="qq" optional="false" privacy="false">
                     <dataType>
                         <kind>STRING</kind>
                     </dataType>

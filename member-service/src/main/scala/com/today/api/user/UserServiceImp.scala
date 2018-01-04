@@ -59,7 +59,7 @@ class UserServiceImp extends UserService{
       try {
         val sc = userRepository.registerUser(request)
         sc match {
-          case None => throw new SoaException("888","注册失败")
+          case None => throw new SoaException("888","注册失败,服务器错误")
           case _ => sc.get
         }
       }catch {
@@ -105,10 +105,16 @@ class UserServiceImp extends UserService{
     *
     **/
   override def login(request: LoginUserRequest): LoginUserResponse = {
-    val sc  = userRepository.queryUserByNameAndPwd(request)
-    sc match {
-      case None=> throw new SoaException("888","登录失败")
-      case _ => sc.get
+    val checkPwd =UserUtil.checkPwd(request.passWord)
+    val checkTel = UserUtil.checkPwd(request.telephone)
+    if(checkTel&&checkPwd){
+      val sc  = userRepository.queryUserByNameAndPwd(request)
+      sc match {
+        case None=> throw new SoaException("888","登录失败用户名或密码错误")
+        case _ => sc.get
+      }
+    } else {
+      throw new SoaException("888","登录失败,登录失败用户名或密码格式错误")
     }
   }
 
@@ -149,7 +155,17 @@ class UserServiceImp extends UserService{
     *
     **/
   override def modifyUser(request: ModifyUserRequest): ModifyUserResponse = {
-    ModifyUserResponse("username","15717111111",UserStatusEnum.ACTIVATED,20)
+    val checkQQ = UserUtil.checkQQ(request.qq)
+    val checkEmail = UserUtil.checkEmail(request.email)
+    if (checkQQ&&checkEmail){
+      val res = userRepository.updateUserProfile(request)
+      res match {
+        case None => throw  new SoaException("777","更新资料失败,未知错误")
+        case _ => res.get
+      }
+    }else{
+      throw  new SoaException("777","更新资料失败,邮箱或qq格式有误，请检查")
+    }
   }
 
   /**

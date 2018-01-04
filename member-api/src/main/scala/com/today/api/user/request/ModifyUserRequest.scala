@@ -16,6 +16,13 @@ package com.today.api.user.request
          /**
         *
 
+ 用户 id
+
+        **/
+        
+        userId : String, /**
+        *
+
  用户邮箱
 
         **/

@@ -24,14 +24,18 @@ struct RegisterUserRequest {
 * 修改用户请求体
 **/
 struct ModifyUserRequest {
+     /**
+     * 用户 id
+     **/
+     1: string userId,
     /**
     * 用户邮箱
     **/
-    1: string email,
+    2: string email,
     /**
     * 用户 qq
     **/
-    2: string qq,
+    3: string qq,
 }
 
 /**
