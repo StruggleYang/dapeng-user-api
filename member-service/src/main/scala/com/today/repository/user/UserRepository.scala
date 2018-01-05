@@ -13,9 +13,7 @@ import wangzx.scala_commons.sql._
 import com.isuwang.dapeng.core.SoaException
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException
 import com.today.entity.Users
-import org.springframework.stereotype.Component
 
-@Component
 class UserRepository {
   @Resource(name = "crm_dataSource")
   var dataSource: DataSource = _
@@ -26,12 +24,11 @@ class UserRepository {
     * @param request
     * @return
     */
-  def registerUser(request: RegisterUserRequest): Option[RegisterUserResponse] = {
+  def insertUser(request: RegisterUserRequest): Option[RegisterUserResponse] = {
     try {
       dataSource.executeUpdate(
-        sql"""INSERT INTO user
-             (user_name,password,telephone,integral,user_status,is_deleted,created_at,updated_at,created_by,updated_by)
-             VALUES (${request.userName},${request.passWord},${request.telephone},0,0,0,${new Date},${new Date},111,111)""")
+        sql"""INSERT INTO user SET user_name = ${request.userName}, password = ${request.passWord},telephone = ${request.telephone},integral = 0,
+             user_status = 0,is_deleted = 0,created_at = now(),updated_at = now(),created_by = 111,updated_by = 111""")
       queryUserByName(request.userName)
     } catch {
       case _: MySQLIntegrityConstraintViolationException => throw new SoaException("666", "手机号已被使用")
@@ -45,25 +42,25 @@ class UserRepository {
     * @return
     */
   def queryUserByName(content: String): Option[RegisterUserResponse] = {
-    val data = dataSource.row[Users](sql"SELECT * FROM user WHERE user_name  = ${content}")
+    val data = dataSource.row[Users](sql"""SELECT * FROM user WHERE user_name  = ${content}""")
     data match {
       case None => None
       case _ => Some(RegisterUserResponse(
-        data.get.user_name,
-        data.get.telephone,
-        findByValue(data.get.user_status),
-        data.get.created_at.getTime))
+        userName = data.get.user_name,
+        telephone = data.get.telephone,
+        status = findByValue(data.get.user_status),
+        createdAt = data.get.created_at.getTime
+      ))
     }
   }
 
   /**
     * 根据用户id查找用户
-    *
     * @param userId
     * @return
     */
   def queryUserById(userId: String): Option[Users] = {
-    val data = dataSource.row[Users](sql"SELECT * FROM user WHERE id  = ${userId}")
+    val data = dataSource.row[Users](sql"""SELECT * FROM user WHERE id  = ${userId}""")
     data match {
       case None => None
       case _ => data
@@ -78,7 +75,7 @@ class UserRepository {
     */
   def checkUserByName(content: String): Boolean = {
     dataSource
-      .rows[Users](sql"SELECT * FROM user WHERE user_name  = ${content}")
+      .rows[Users](sql"""SELECT * FROM user WHERE user_name  = ${content}""")
       .isEmpty
   }
 
@@ -92,53 +89,40 @@ class UserRepository {
     val data = dataSource.row[Users](sql"select *  from user where telephone = ${request.telephone} and password =${request.passWord}")
     data match {
       case None => None
-      case _ => Some(LoginUserResponse(
-        data.get.user_name,
-        data.get.telephone,
-        findByValue(data.get.user_status),
-        data.get.integral,
-        data.get.created_at.getTime,
-        data.get.updated_at.getTime,
-        data.get.email,
-        data.get.qq))
+      case Some(x) => Some(BeanBuilder.build[LoginUserResponse](x)(
+        "userName" -> x.user_name,
+        "status" -> findByValue(x.user_status),
+        "createdAt" -> x.created_at.getTime,
+        "updatedAt" -> x.updated_at.getTime
+      ))
     }
   }
 
   /**
-    * 更新用户资料
+    * 更新用户资料,完善资料，成为权属会员
     *
     * @param request
     * @return
     */
   def updateUserProfile(request: ModifyUserRequest): Option[ModifyUserResponse] = {
-    /**
-      * 完善资料，成为权属会员
-      */
+
     val data = dataSource.executeUpdate(
       sql"""update user set email = ${request.email} , qq = ${request.qq},user_status = ${UserStatusEnum.DATA_PERFECTED.id},
            updated_at = ${new Date},updated_by = ${request.userId} where id = ${request.userId}""")
 
-    if (data != 0) {
-      val userInfo = queryUserById(request.userId)
-      userInfo match {
-        case None => None
-        case _ => Some(
-          ModifyUserResponse(
-            userInfo.get.user_name,
-            userInfo.get.telephone,
-            UserStatusEnum.findByValue(userInfo.get.user_status),
-            userInfo.get.updated_at.getTime,
-            userInfo.get.email,
-            userInfo.get.qq)
-        )
-      }
-    } else {
-      throw new SoaException("777", "更新资料失败")
+    val userInfo = queryUserById(request.userId)
+    userInfo match {
+      case None => None
+      case Some(x) => Some(BeanBuilder.build[ModifyUserResponse](x)(
+        "userName" -> x.user_name,
+        "status" -> findByValue(x.user_status),
+        "updatedAt" -> x.updated_at.getTime
+      ))
     }
   }
 
   /**
-    * 增加积分
+    * 改变积分
     *
     * @param userId         用户id
     * @param increment      增加的积分值
@@ -154,24 +138,18 @@ class UserRepository {
                           mark: String*): Boolean = {
 
     var _mark = integralSource.name
-    if (mark.nonEmpty && mark.length == 1) {
-      _mark = mark(0)
-    } else {
-      for (m <- mark) _mark += m
-    }
-
-    val Int_log = dataSource.executeUpdate(
-      sql"UPDATE user SET integral = integral+${increment}, updated_at = ${new Date} ,updated_by = ${userId} WHERE  id = ${userId} ")
+    if (mark.nonEmpty && mark.length == 1) {_mark = mark(0)}
+    else {for (m <- mark) _mark += m}
+   dataSource.executeUpdate(
+      sql"""UPDATE user SET integral = integral+${increment}, updated_at = now(),updated_by = ${userId} WHERE  id = ${userId} """)
     // 当前的积分
     val curr_Integral = queryUserById(userId).get.integral
 
     // 插入一条积分流水
-    val journal_res = dataSource.executeUpdate(
-      sql"""INSERT INTO integral_journal (user_id, integral_type, integral_price, integral_source, integral, created_at, created_by, updated_at, updated_by, remark)
-               VALUES (${userId},${integralType.id},${increment},${integralSource.id},
-            ${curr_Integral},${new Date},${userId},${new Date},${userId},${_mark}) """
-    )
-    journal_res != 0
+  dataSource.executeUpdate(
+      sql"""INSERT INTO integral_journal SET user_id = ${userId},integral_type = ${integralType.id},integral_price = ${increment},integral_source =${integralSource.id} ,
+           integral = ${curr_Integral},created_at = now(),created_by = ${userId},updated_at = now(),updated_by = ${userId},remark = ${_mark}"""
+    ) != 0
   }
 
   /**
@@ -182,17 +160,14 @@ class UserRepository {
     * @param mark           可选状态变更备注,如果不写则是状态的描述
     * @return
     */
-  def updateUserStaus(userId: String, userStatusEnum: UserStatusEnum, mark: String*): Boolean = {
+  def updateUserStatus(userId: String, userStatusEnum: UserStatusEnum, mark: String*): Boolean = {
 
     var _mark = userStatusEnum.name
-    if (mark.nonEmpty && mark.length == 1) {
-      _mark = mark(0)
-    } else {
-      for (m <- mark) _mark += m
-    }
+    if (mark.nonEmpty && mark.length == 1) {_mark = mark(0)}
+    else {for (m <- mark) _mark += m}
 
     dataSource.executeUpdate(
-      sql"""update user set user_status = ${userStatusEnum.id} , remark = ${_mark},updated_by = 111,updated_at = ${new Date} where id = ${userId}""") != 0
+      sql"""update user set user_status = ${userStatusEnum.id} , remark = ${_mark},updated_by = 111,updated_at = now() where id = ${userId}""") != 0
   }
 
 }

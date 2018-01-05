@@ -54,20 +54,4 @@ object UserUtil {
     val PWD_PATTERN = """[a-zA-Z0-9]""".r
     8 <= pwd.length && pwd.length <= 16 && PWD_PATTERN.findAllIn(pwd).nonEmpty
   }
-
-  /**
-    * 字符串转换为数字
-    *
-    * @param str
-    * @return
-    */
-  def strToInt(str: String): Int = {
-    val regex = """([0-9]+)""".r
-    val res = str match {
-      case regex(num) => num
-      case _ => "0"
-    }
-    val resInt = Integer.parseInt(res)
-    resInt
-  }
 }
