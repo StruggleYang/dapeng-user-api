@@ -26,31 +26,21 @@ class UserRepository {
     */
   def insertUser(request: RegisterUserRequest): Option[RegisterUserResponse] = {
     try {
-      dataSource.executeUpdate(
+      val uid = dataSource.generateKey[Int](
         sql"""INSERT INTO user SET user_name = ${request.userName}, password = ${request.passWord},telephone = ${request.telephone},integral = 0,
              user_status = 0,is_deleted = 0,created_at = now(),updated_at = now(),created_by = 111,updated_by = 111""")
-      queryUserByName(request.userName)
+      queryUserById(uid.toString) match {
+        case None => None
+        case Some(x)=> Some(
+          RegisterUserResponse(
+          userName = x.user_name,
+          telephone = x.telephone,
+          status = findByValue(x.user_status),
+          createdAt = x.created_at.getTime
+        ))
+      }
     } catch {
       case _: MySQLIntegrityConstraintViolationException => throw new SoaException("666", "手机号已被使用")
-    }
-  }
-
-  /**
-    * 根据用户名查找用户
-    *
-    * @param content
-    * @return
-    */
-  def queryUserByName(content: String): Option[RegisterUserResponse] = {
-    val data = dataSource.row[Users](sql"""SELECT * FROM user WHERE user_name  = ${content}""")
-    data match {
-      case None => None
-      case _ => Some(RegisterUserResponse(
-        userName = data.get.user_name,
-        telephone = data.get.telephone,
-        status = findByValue(data.get.user_status),
-        createdAt = data.get.created_at.getTime
-      ))
     }
   }
 

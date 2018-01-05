@@ -20,6 +20,7 @@ class UserServiceImp extends UserService {
     **/
   override def registerUser(request: RegisterUserRequest): RegisterUserResponse = {
 
+
     val checkUse = userRepository.checkUserByName(request.userName)
     val checkName = UserUtil.checkName(request.userName)
     val checkPwd = UserUtil.checkPwd(request.passWord)
