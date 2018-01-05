@@ -34,7 +34,7 @@ class UserServiceImp extends UserService {
           case _ => sc.get
         }
       } catch {
-        case ms: MySQLIntegrityConstraintViolationException => throw new SoaException("777", "手机号已被使用")
+        case _: MySQLIntegrityConstraintViolationException => throw new SoaException("777", "手机号已被使用")
       }
     } else {
       throw new SoaException("666", "请求参数有误，检查用户名和密码填写正确")
@@ -73,7 +73,7 @@ class UserServiceImp extends UserService {
       // 修改资料的积分，暂时写死，应当定义为枚举
       val profile_integral: Int = 5
       // 修改积分及流水,返回修改状态
-      val changeStatus: Boolean = userRepository.changeUserIntegral(request.userId, profile_integral, IntegralTypeEnum.ADD, IntegralSourceEnum.PREFECT_INFORMATION)
+      val _: Boolean = userRepository.changeUserIntegral(request.userId, profile_integral, IntegralTypeEnum.ADD, IntegralSourceEnum.PREFECT_INFORMATION)
 
       res match {
         case None => throw new SoaException("777", "更新资料失败,未知错误")
@@ -115,14 +115,14 @@ class UserServiceImp extends UserService {
       UserStatusEnum.FREEZED.id)
 
     // 检查用户状态
-    val checkStatus = statusList.contains(userRepository.queryUserById(request.userId).get.user_status)
+    val checkStatus:Boolean = statusList.contains(userRepository.queryUserById(request.userId).get.user_status)
     if (!checkStatus) {
       userRepository.updateUserStatus(request.userId, UserStatusEnum.BLACK, request.remark)
 
-      // 修改资料的积分，暂时写死，应当定义为枚举
+      // 清空积分，会减去当前用户的所有积分
       val profile_integral: Int = -userRepository.queryUserById(request.userId).get.integral
       // 修改积分及流水,返回修改状态
-      val changeStatus: Boolean = userRepository.changeUserIntegral(request.userId, profile_integral, IntegralTypeEnum.MINUS, IntegralSourceEnum.BLACK, request.remark)
+      val _: Boolean = userRepository.changeUserIntegral(request.userId, profile_integral, IntegralTypeEnum.MINUS, IntegralSourceEnum.BLACK, request.remark)
       val userData = userRepository.queryUserById(request.userId)
       userData match {
         case None => throw new SoaException("777", "此用户不在拉黑操作范围内")

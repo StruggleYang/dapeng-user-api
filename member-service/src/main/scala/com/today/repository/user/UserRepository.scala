@@ -125,8 +125,7 @@ class UserRepository {
     * @param integralSource 积分来源
     * @param mark           可选状态变更备注,如果不写则是状态的描述
     */
-  def changeUserIntegral(
-                          userId: String,
+  def changeUserIntegral(userId: String,
                           increment: Int,
                           integralType: IntegralTypeEnum,
                           integralSource: IntegralSourceEnum,
