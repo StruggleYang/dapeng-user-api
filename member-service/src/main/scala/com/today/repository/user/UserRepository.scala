@@ -27,7 +27,8 @@ class UserRepository {
   def insertUser(request: RegisterUserRequest): Option[RegisterUserResponse] = {
     try {
       val uid = dataSource.generateKey[Int](
-        sql"""INSERT INTO user SET user_name = ${request.userName}, password = ${request.passWord},telephone = ${request.telephone},integral = 0,
+        sql"""INSERT INTO user
+              SET user_name = ${request.userName}, password = ${request.passWord},telephone = ${request.telephone},integral = 0,
              user_status = 0,is_deleted = 0,created_at = now(),updated_at = now(),created_by = 111,updated_by = 111""")
       queryUserById(uid.toString) match {
         case None => None
@@ -76,7 +77,10 @@ class UserRepository {
     * @return
     */
   def queryUserByNameAndPwd(request: LoginUserRequest): Option[LoginUserResponse] = {
-    val data = dataSource.row[Users](sql"select *  from user where telephone = ${request.telephone} and password =${request.passWord}")
+    val data = dataSource.row[Users](
+      sql"""select *
+           from user where telephone = ${request.telephone}
+           and password =${request.passWord}""")
     data match {
       case None => None
       case Some(x) => Some(BeanBuilder.build[LoginUserResponse](x)(
@@ -97,7 +101,8 @@ class UserRepository {
   def updateUserProfile(request: ModifyUserRequest): Option[ModifyUserResponse] = {
 
     val data = dataSource.executeUpdate(
-      sql"""update user set email = ${request.email} , qq = ${request.qq},user_status = ${UserStatusEnum.DATA_PERFECTED.id},
+      sql"""update
+            user set email = ${request.email} , qq = ${request.qq},user_status = ${UserStatusEnum.DATA_PERFECTED.id},
            updated_at = ${new Date},updated_by = ${request.userId} where id = ${request.userId}""")
 
     val userInfo = queryUserById(request.userId)
@@ -131,13 +136,16 @@ class UserRepository {
     if (mark.nonEmpty && mark.length == 1) {_mark = mark(0)}
     else {for (m <- mark) _mark += m}
    dataSource.executeUpdate(
-      sql"""UPDATE user SET integral = integral+${increment}, updated_at = now(),updated_by = ${userId} WHERE  id = ${userId} """)
+      sql"""UPDATE
+           user SET integral = integral+${increment}, updated_at = now(),updated_by = ${userId}
+           WHERE  id = ${userId} """)
     // 当前的积分
     val curr_Integral = queryUserById(userId).get.integral
 
     // 插入一条积分流水
   dataSource.executeUpdate(
-      sql"""INSERT INTO integral_journal SET user_id = ${userId},integral_type = ${integralType.id},integral_price = ${increment},integral_source =${integralSource.id} ,
+      sql"""INSERT INTO integral_journal
+            SET user_id = ${userId},integral_type = ${integralType.id},integral_price = ${increment},integral_source =${integralSource.id} ,
            integral = ${curr_Integral},created_at = now(),created_by = ${userId},updated_at = now(),updated_by = ${userId},remark = ${_mark}"""
     ) != 0
   }
@@ -157,7 +165,9 @@ class UserRepository {
     else {for (m <- mark) _mark += m}
 
     dataSource.executeUpdate(
-      sql"""update user set user_status = ${userStatusEnum.id} , remark = ${_mark},updated_by = 111,updated_at = now() where id = ${userId}""") != 0
+      sql"""update
+           user set user_status = ${userStatusEnum.id} , remark = ${_mark},updated_by = 111,updated_at = now()
+           where id = ${userId}""") != 0
   }
 
 }
