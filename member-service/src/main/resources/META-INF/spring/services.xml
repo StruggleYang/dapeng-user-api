@@ -16,9 +16,9 @@
 
     <context:component-scan base-package="com.today.service*"/>
 
-    <bean id="userService" class="com.today.service.user.UserServiceImpl">
-    </bean>
+    <bean id="userService" class="com.today.service.user.UserServiceImpl"/>
     <soa:service ref="userService"/>
+    <bean id="dataSource" class="com.today.service.user.DbSource"/>
 
     <bean id="slf4j-filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
         <property name="statementExecutableSqlLogEnable" value="true"/>
