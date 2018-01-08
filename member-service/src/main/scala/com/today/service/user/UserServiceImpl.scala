@@ -5,6 +5,7 @@ import com.today.api.user.response._
 import com.today.api.user.service.UserService
 import com.today.service.user.action._
 import com.today.service.user.action.sql.UserActionSql
+import com.today.service.user.query.FindUserByPageQuery
 import com.today.service.user.query.sql.UserQuerySql
 
 class UserServiceImpl extends UserService{
@@ -39,5 +40,7 @@ class UserServiceImpl extends UserService{
   }
 
   // TODO 分页查询
-  override def findUserByPage(request: FindUserByPageRequest): FindUserByPageResponse = ???
+  override def findUserByPage(request: FindUserByPageRequest): FindUserByPageResponse = {
+    new FindUserByPageQuery(request).execute
+  }
 }

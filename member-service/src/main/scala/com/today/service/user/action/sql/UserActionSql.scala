@@ -148,6 +148,4 @@ object UserActionSql {
             where id = ${userId}""") != 0
   }
 
-
-
 }
