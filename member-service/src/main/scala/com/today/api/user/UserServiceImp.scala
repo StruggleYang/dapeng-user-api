@@ -24,7 +24,7 @@ class UserServiceImp extends UserService {
     val checkUse = userRepository.checkUserByName(request.userName)
     val checkName = UserUtil.checkName(request.userName)
     val checkPwd = UserUtil.checkPwd(request.passWord)
-    val checkTel = UserUtil.checkPwd(request.telephone)
+    val checkTel = UserUtil.checkTel(request.telephone)
 
     if (checkUse && checkName && checkPwd && checkTel) {
       try {
@@ -47,7 +47,7 @@ class UserServiceImp extends UserService {
   override def login(request: LoginUserRequest): LoginUserResponse = {
 
     val checkPwd = UserUtil.checkPwd(request.passWord)
-    val checkTel = UserUtil.checkPwd(request.telephone)
+    val checkTel = UserUtil.checkTel(request.telephone)
 
     if (checkTel && checkPwd) {
       val sc = userRepository.queryUserByNameAndPwd(request)
