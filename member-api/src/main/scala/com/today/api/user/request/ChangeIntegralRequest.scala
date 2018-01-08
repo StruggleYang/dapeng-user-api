@@ -20,14 +20,14 @@ package com.today.api.user.request
 
         **/
         
-        userId : String, /**
+        userId : Int, /**
         *
 
   该流水涉及到的积分数(可正可负)
 
         **/
         
-        integralPrice : String, /**
+        integralPrice : Int, /**
         *
 
   积分流水类型

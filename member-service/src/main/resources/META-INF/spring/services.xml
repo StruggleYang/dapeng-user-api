@@ -14,12 +14,11 @@
     <context:property-placeholder location="classpath:config_member.properties" local-override="false"
                                   system-properties-mode="ENVIRONMENT"/>
 
-    <context:component-scan base-package="com.today.*"/>
+    <context:component-scan base-package="com.today.service*"/>
 
-    <bean id="userService" class="com.today.api.user.UserServiceImp">
+    <bean id="userService" class="com.today.service.user.UserServiceImpl">
     </bean>
     <soa:service ref="userService"/>
-    <bean id="userRepository" class="com.today.repository.user.UserRepository"/>
 
     <bean id="slf4j-filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
         <property name="statementExecutableSqlLogEnable" value="true"/>

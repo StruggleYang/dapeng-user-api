@@ -1,6 +1,6 @@
 package com.today.api.user
 
-import com.today.api.user.request.serializer._;import com.today.api.user.response.serializer._;
+import com.today.api.user.dto.serializer._;import com.today.api.user.request.serializer._;import com.today.api.user.response.serializer._;import com.today.api.page.serializer._;
 
         import com.isuwang.dapeng.core._
         import com.isuwang.org.apache.thrift._
@@ -945,6 +945,162 @@ import com.today.api.user.request.serializer._;import com.today.api.user.respons
             }
           }
           
+            case class findUserByPage_args(request:com.today.api.user.request.FindUserByPageRequest)
+
+            case class findUserByPage_result(success:com.today.api.user.response.FindUserByPageResponse)
+
+            class FindUserByPage_argsSerializer extends TCommonBeanSerializer[findUserByPage_args]{
+            
+      @throws[TException]
+      override def read(iprot: TProtocol): findUserByPage_args = {
+
+        var schemeField: com.isuwang.org.apache.thrift.protocol.TField = null
+        iprot.readStructBegin()
+
+      var request: com.today.api.user.request.FindUserByPageRequest = null
+        
+
+      while (schemeField == null || schemeField.`type` != com.isuwang.org.apache.thrift.protocol.TType.STOP) {
+
+        schemeField = iprot.readFieldBegin
+
+        schemeField.id match {
+          
+              case 1 =>
+                  schemeField.`type` match {
+                    case com.isuwang.org.apache.thrift.protocol.TType.STRUCT => request = new com.today.api.user.request.serializer.FindUserByPageRequestSerializer().read(iprot)
+                    case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
+            }
+            
+          case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
+        }
+      }
+
+      iprot.readFieldEnd
+      iprot.readStructEnd
+
+      val bean = findUserByPage_args(request = request)
+      validate(bean)
+
+      bean
+      }
+    
+      @throws[TException]
+      override def write(bean: findUserByPage_args, oprot: TProtocol): Unit = {
+
+      validate(bean)
+      oprot.writeStructBegin(new com.isuwang.org.apache.thrift.protocol.TStruct("findUserByPage_args"))
+
+      
+            {
+            val elem0 = bean.request 
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("request", com.isuwang.org.apache.thrift.protocol.TType.STRUCT, 1.asInstanceOf[Short]))
+             new com.today.api.user.request.serializer.FindUserByPageRequestSerializer().write(elem0, oprot)
+            oprot.writeFieldEnd
+            
+            }
+      oprot.writeFieldStop
+      oprot.writeStructEnd
+    }
+    
+      @throws[TException]
+      override def validate(bean: findUserByPage_args): Unit = {
+      
+              if(bean.request == null)
+              throw new SoaException(SoaBaseCode.NotNull, "request字段不允许为空")
+            
+                if(bean.request != null)
+                new com.today.api.user.request.serializer.FindUserByPageRequestSerializer().validate(bean.request)
+              
+    }
+    
+
+            override def toString(bean: findUserByPage_args): String = if(bean == null)  "null" else bean.toString
+            }
+
+            class FindUserByPage_resultSerializer extends TCommonBeanSerializer[findUserByPage_result]{
+
+            @throws[TException]
+            override def read(iprot: TProtocol): findUserByPage_result = {
+
+              var schemeField: com.isuwang.org.apache.thrift.protocol.TField = null
+              iprot.readStructBegin
+
+              var success : com.today.api.user.response.FindUserByPageResponse = null
+
+              while (schemeField == null || schemeField.`type` != com.isuwang.org.apache.thrift.protocol.TType.STOP) {
+
+                schemeField = iprot.readFieldBegin
+
+                schemeField.id match {
+                    case 0 =>
+                       schemeField.`type` match {
+                          case com.isuwang.org.apache.thrift.protocol.TType.STRUCT =>  success = new com.today.api.user.response.serializer.FindUserByPageResponseSerializer().read(iprot)
+                          case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
+                  }
+                    case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
+                }
+
+                iprot.readFieldEnd
+              }
+
+              iprot.readStructEnd
+              val bean = findUserByPage_result(success)
+              validate(bean)
+
+              bean
+            }
+
+            
+      @throws[TException]
+      override def write(bean: findUserByPage_result, oprot: TProtocol): Unit = {
+
+      validate(bean)
+      oprot.writeStructBegin(new com.isuwang.org.apache.thrift.protocol.TStruct("findUserByPage_result"))
+
+      
+            {
+            val elem0 = bean.success 
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("success", com.isuwang.org.apache.thrift.protocol.TType.STRUCT, 0.asInstanceOf[Short]))
+             new com.today.api.user.response.serializer.FindUserByPageResponseSerializer().write(elem0, oprot)
+            oprot.writeFieldEnd
+            
+            }
+      oprot.writeFieldStop
+      oprot.writeStructEnd
+    }
+    
+            
+      @throws[TException]
+      override def validate(bean: findUserByPage_result): Unit = {
+      
+              if(bean.success == null)
+              throw new SoaException(SoaBaseCode.NotNull, "success字段不允许为空")
+            
+                if(bean.success != null)
+                new com.today.api.user.response.serializer.FindUserByPageResponseSerializer().validate(bean.success)
+              
+    }
+    
+
+            override def toString(bean: findUserByPage_result): String = if(bean == null)  "null" else bean.toString
+          }
+
+            class findUserByPage extends SoaProcessFunction[com.today.api.user.service.UserService, findUserByPage_args, findUserByPage_result, FindUserByPage_argsSerializer,  FindUserByPage_resultSerializer]("findUserByPage", new FindUserByPage_argsSerializer(), new FindUserByPage_resultSerializer()){
+
+            override def isOneway: Boolean = false
+
+            override def getEmptyArgsInstance: findUserByPage_args = null
+
+
+            @throws[TException]
+            def getResult(iface: com.today.api.user.service.UserService, args: findUserByPage_args):findUserByPage_result = {
+
+              val _result = iface.findUserByPage(args.request)
+              findUserByPage_result(_result )
+            }
+          }
+          
 
         case class getServiceMetadata_args()
 
@@ -1076,6 +1232,7 @@ import com.today.api.user.request.serializer._;import com.today.api.user.respons
               map.put("freezeUser", new freezeUser)
               map.put("blackUser", new blackUser)
               map.put("changeUserIntegral", new changeUserIntegral)
+              map.put("findUserByPage", new findUserByPage)
               
             map.put("getServiceMetadata", new getServiceMetadata)
             map

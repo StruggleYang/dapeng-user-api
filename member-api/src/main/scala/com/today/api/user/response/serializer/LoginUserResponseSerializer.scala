@@ -1,6 +1,6 @@
  package com.today.api.user.response.serializer
 
-import com.today.api.user.request.serializer._;import com.today.api.user.response.serializer._;
+import com.today.api.user.dto.serializer._;import com.today.api.user.request.serializer._;import com.today.api.user.response.serializer._;import com.today.api.page.serializer._;
         import com.isuwang.dapeng.core._
         import com.isuwang.org.apache.thrift._
         import com.isuwang.org.apache.thrift.protocol._

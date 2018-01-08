@@ -8,10 +8,10 @@ package com.today.api.user.request
 
         *
 
- 修改用户请求体
+ 分页查询用户接口
 
         **/
-        case class ModifyUserRequest(
+        case class FindUserByPageRequest(
 
          /**
         *
@@ -20,20 +20,20 @@ package com.today.api.user.request
 
         **/
         
-        userId : Int, /**
+        pageRequest : com.today.api.page.TPageRequest, /**
         *
 
- 用户邮箱
+  积分数
 
         **/
         
-        email : String, /**
+        integral : Int, /**
         *
 
- 用户 qq
+  用户类型
 
         **/
         
-        qq : String
+        userStatus : com.today.api.user.enums.UserStatusEnum
         )
       

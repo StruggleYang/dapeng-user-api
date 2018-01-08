@@ -1,4 +1,4 @@
-package com.today.util
+package com.today.util.user
 
 object UserUtil {
 

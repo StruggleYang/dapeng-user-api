@@ -51,8 +51,8 @@ CREATE TABLE `user` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `updated_by` int(11) DEFAULT NULL COMMENT '特指后台更新人(公司员工 id)',
   `remark` char(255) DEFAULT '' COMMENT '备注',
-  `user_status` int(11) DEFAULT NULL,
-  `is_deleted` int(11) DEFAULT NULL,
+  `user_status` int(11) DEFAULT NULL COMMENT '用户状态',
+  `is_deleted` int(11) DEFAULT NULL COMMENT '数据状态',
   PRIMARY KEY (`id`),
   UNIQUE KEY `telephone` (`telephone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='用户表';

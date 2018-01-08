@@ -1,6 +1,7 @@
 namespace java com.today.api.user.request
 
 include 'user_enum.thrift'
+include 'page.thrift'
 
 /**
 * 注册用户请求体
@@ -24,10 +25,10 @@ struct RegisterUserRequest {
 * 修改用户请求体
 **/
 struct ModifyUserRequest {
-     /**
-     * 用户 id
-     **/
-     1: string userId,
+  /**
+    * 用户 id
+    **/
+    1: i32 userId,
     /**
     * 用户邮箱
     **/
@@ -59,7 +60,7 @@ struct FreezeUserRequest {
     /**
     * 用户 id
     **/
-    1: string userId,
+    1: i32 userId,
     /**
     *  操作员冻结备注
     **/
@@ -73,7 +74,7 @@ struct BlackUserRequest {
     /**
     * 用户 id
     **/
-    1: string userId,
+    1: i32 userId,
     /**
     *  操作员拉黑备注
     **/
@@ -87,11 +88,11 @@ struct ChangeIntegralRequest {
     /**
     * 用户 id
     **/
-    1: string userId,
+    1: i32 userId,
     /**
     *  该流水涉及到的积分数(可正可负)
     **/
-    2: string integralPrice,
+    2: i32 integralPrice,
     /**
     *  积分流水类型
     **/
@@ -100,4 +101,23 @@ struct ChangeIntegralRequest {
     *  积分改变的来源
     **/
     4: user_enum.IntegralSourceEnum integralSource,
+}
+
+
+/**
+* 分页查询用户接口
+**/
+struct FindUserByPageRequest {
+    /**
+    * 用户 id
+    **/
+    1: page.TPageRequest pageRequest,
+    /**
+    *  积分数
+    **/
+    2: i32 integral,
+    /**
+    *  用户类型
+    **/
+    3: user_enum.UserStatusEnum userStatus,
 }

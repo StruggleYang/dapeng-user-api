@@ -1,6 +1,8 @@
 namespace java com.today.api.user.response
 
 include 'user_enum.thrift'
+include 'page.thrift'
+include 'user_dto.thrift'
 
 /**
 * 注册用户返回体
@@ -128,4 +130,19 @@ struct BlackUserResponse {
     *  操作员冻结备注
     **/
     3: string remark,
+}
+
+/**
+* 分页查询用户操作返回体
+**/
+struct FindUserByPageResponse {
+    /**
+    * 用户 id
+    **/
+    1: page.TPageResponse pageResponse,
+
+    /**
+    * 用户列表
+    **/
+    2: list<user_dto.TUser> userList,
 }

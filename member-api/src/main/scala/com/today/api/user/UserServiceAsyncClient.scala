@@ -390,6 +390,66 @@ import com.isuwang.dapeng.core._
             }
           }
           
+            /**
+            * 
+
+### 分页查询用户接口
+
+#### 业务描述
+   根据条件分页查询用户
+
+#### 接口依赖
+    无
+#### 边界异常说明
+    无
+
+#### 输入
+    1.user_request.FindUserByPageRequest
+
+#### 前置检查
+    1.用户状态检查(已冻结,已拉黑,已逻辑删除的用户不能冻结)
+
+####  逻辑处理
+    1. 设置用户状态为 FREEZE
+
+#### 数据库变更
+    1. update user set integral = ?  where id = ${userId}
+    2. insert into integral_journal() values()
+
+####  事务处理
+    1. 无
+
+####  输出
+    1. user_response.FindUserByPageResponse
+
+            **/
+            def findUserByPage(request:com.today.api.user.request.FindUserByPageRequest , timeout: Long) : scala.concurrent.Future[com.today.api.user.response.FindUserByPageResponse] = {
+
+            initContext("findUserByPage");
+
+            try {
+              val _responseFuture = sendBaseAsync(findUserByPage_args(request), new FindUserByPage_argsSerializer(), new FindUserByPage_resultSerializer(), timeout).asInstanceOf[java.util.concurrent.CompletableFuture[findUserByPage_result]]
+
+              val promise = Promise[com.today.api.user.response.FindUserByPageResponse]()
+
+              _responseFuture.whenComplete(new BiConsumer[findUserByPage_result, Throwable]{
+
+              override def accept(r: findUserByPage_result, e: Throwable): Unit = {
+                if(e != null)
+                  promise.failure(e)
+                else
+                  promise.success(r.success)
+                }
+              })
+              promise.future
+            }catch{
+              case e: SoaException => throw e
+              case e: TException => throw new SoaException(e)
+            }finally {
+              destoryContext()
+            }
+          }
+          
 
       }
       

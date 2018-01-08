@@ -250,5 +250,43 @@ import com.isuwang.dapeng.core.{Processor, Service}
             request: com.today.api.user.request.ChangeIntegralRequest ): Int
 
           
+            /**
+            * 
+
+### 分页查询用户接口
+
+#### 业务描述
+   根据条件分页查询用户
+
+#### 接口依赖
+    无
+#### 边界异常说明
+    无
+
+#### 输入
+    1.user_request.FindUserByPageRequest
+
+#### 前置检查
+    1.用户状态检查(已冻结,已拉黑,已逻辑删除的用户不能冻结)
+
+####  逻辑处理
+    1. 设置用户状态为 FREEZE
+
+#### 数据库变更
+    1. update user set integral = ?  where id = ${userId}
+    2. insert into integral_journal() values()
+
+####  事务处理
+    1. 无
+
+####  输出
+    1. user_response.FindUserByPageResponse
+
+            **/
+            
+            def findUserByPage(
+            request: com.today.api.user.request.FindUserByPageRequest ): com.today.api.user.response.FindUserByPageResponse
+
+          
         }
         

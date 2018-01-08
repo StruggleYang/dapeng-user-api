@@ -1,6 +1,6 @@
  package com.today.api.user.request.serializer
 
-import com.today.api.user.request.serializer._;import com.today.api.user.response.serializer._;
+import com.today.api.user.dto.serializer._;import com.today.api.user.request.serializer._;import com.today.api.user.response.serializer._;import com.today.api.page.serializer._;
         import com.isuwang.dapeng.core._
         import com.isuwang.org.apache.thrift._
         import com.isuwang.org.apache.thrift.protocol._
@@ -20,7 +20,7 @@ import com.today.api.user.request.serializer._;import com.today.api.user.respons
         var schemeField: com.isuwang.org.apache.thrift.protocol.TField = null
         iprot.readStructBegin()
 
-      var userId: String = null
+      var userId: Int = 0
         var remark: String = null
         
 
@@ -32,7 +32,7 @@ import com.today.api.user.request.serializer._;import com.today.api.user.respons
           
               case 1 =>
                   schemeField.`type` match {
-                    case com.isuwang.org.apache.thrift.protocol.TType.STRING => userId = iprot.readString
+                    case com.isuwang.org.apache.thrift.protocol.TType.I32 => userId = iprot.readI32
                     case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
             }
             
@@ -64,8 +64,8 @@ import com.today.api.user.request.serializer._;import com.today.api.user.respons
       
             {
             val elem0 = bean.userId 
-            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("userId", com.isuwang.org.apache.thrift.protocol.TType.STRING, 1.asInstanceOf[Short]))
-            oprot.writeString(elem0)
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("userId", com.isuwang.org.apache.thrift.protocol.TType.I32, 1.asInstanceOf[Short]))
+            oprot.writeI32(elem0)
             oprot.writeFieldEnd
             
             }
@@ -83,9 +83,6 @@ import com.today.api.user.request.serializer._;import com.today.api.user.respons
       @throws[TException]
       override def validate(bean: com.today.api.user.request.BlackUserRequest): Unit = {
       
-              if(bean.userId == null)
-              throw new SoaException(SoaBaseCode.NotNull, "userId字段不允许为空")
-            
               if(bean.remark == null)
               throw new SoaException(SoaBaseCode.NotNull, "remark字段不允许为空")
             

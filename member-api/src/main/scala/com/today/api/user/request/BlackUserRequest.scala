@@ -20,7 +20,7 @@ package com.today.api.user.request
 
         **/
         
-        userId : String, /**
+        userId : Int, /**
         *
 
   操作员拉黑备注

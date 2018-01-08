@@ -1,4 +1,4 @@
- package com.today.api.user.request.serializer
+ package com.today.api.page.serializer
 
 import com.today.api.user.dto.serializer._;import com.today.api.user.request.serializer._;import com.today.api.user.response.serializer._;import com.today.api.page.serializer._;
         import com.isuwang.dapeng.core._
@@ -12,17 +12,17 @@ import com.today.api.user.dto.serializer._;import com.today.api.user.request.ser
         *  @generated
         **/
 
-        class ModifyUserRequestSerializer extends TCommonBeanSerializer[com.today.api.user.request.ModifyUserRequest]{
+        class TPageRequestSerializer extends TCommonBeanSerializer[com.today.api.page.TPageRequest]{
           
       @throws[TException]
-      override def read(iprot: TProtocol): com.today.api.user.request.ModifyUserRequest = {
+      override def read(iprot: TProtocol): com.today.api.page.TPageRequest = {
 
         var schemeField: com.isuwang.org.apache.thrift.protocol.TField = null
         iprot.readStructBegin()
 
-      var userId: Int = 0
-        var email: String = null
-        var qq: String = null
+      var start: Int = 0
+        var limit: Int = 0
+        var sortFields: Option[String] = None
         
 
       while (schemeField == null || schemeField.`type` != com.isuwang.org.apache.thrift.protocol.TType.STOP) {
@@ -33,19 +33,19 @@ import com.today.api.user.dto.serializer._;import com.today.api.user.request.ser
           
               case 1 =>
                   schemeField.`type` match {
-                    case com.isuwang.org.apache.thrift.protocol.TType.I32 => userId = iprot.readI32
+                    case com.isuwang.org.apache.thrift.protocol.TType.I32 => start = iprot.readI32
                     case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
             }
             
               case 2 =>
                   schemeField.`type` match {
-                    case com.isuwang.org.apache.thrift.protocol.TType.STRING => email = iprot.readString
+                    case com.isuwang.org.apache.thrift.protocol.TType.I32 => limit = iprot.readI32
                     case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
             }
             
               case 3 =>
                   schemeField.`type` match {
-                    case com.isuwang.org.apache.thrift.protocol.TType.STRING => qq = iprot.readString
+                    case com.isuwang.org.apache.thrift.protocol.TType.STRING => sortFields = Option(iprot.readString)
                     case _ => com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.`type`)
             }
             
@@ -56,36 +56,36 @@ import com.today.api.user.dto.serializer._;import com.today.api.user.request.ser
       iprot.readFieldEnd
       iprot.readStructEnd
 
-      val bean = com.today.api.user.request.ModifyUserRequest(userId = userId,email = email,qq = qq)
+      val bean = com.today.api.page.TPageRequest(start = start,limit = limit,sortFields = sortFields)
       validate(bean)
 
       bean
       }
     
       @throws[TException]
-      override def write(bean: com.today.api.user.request.ModifyUserRequest, oprot: TProtocol): Unit = {
+      override def write(bean: com.today.api.page.TPageRequest, oprot: TProtocol): Unit = {
 
       validate(bean)
-      oprot.writeStructBegin(new com.isuwang.org.apache.thrift.protocol.TStruct("ModifyUserRequest"))
+      oprot.writeStructBegin(new com.isuwang.org.apache.thrift.protocol.TStruct("TPageRequest"))
 
       
             {
-            val elem0 = bean.userId 
-            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("userId", com.isuwang.org.apache.thrift.protocol.TType.I32, 1.asInstanceOf[Short]))
+            val elem0 = bean.start 
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("start", com.isuwang.org.apache.thrift.protocol.TType.I32, 1.asInstanceOf[Short]))
             oprot.writeI32(elem0)
             oprot.writeFieldEnd
             
             }
             {
-            val elem1 = bean.email 
-            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("email", com.isuwang.org.apache.thrift.protocol.TType.STRING, 2.asInstanceOf[Short]))
-            oprot.writeString(elem1)
+            val elem1 = bean.limit 
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("limit", com.isuwang.org.apache.thrift.protocol.TType.I32, 2.asInstanceOf[Short]))
+            oprot.writeI32(elem1)
             oprot.writeFieldEnd
             
             }
-            {
-            val elem2 = bean.qq 
-            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("qq", com.isuwang.org.apache.thrift.protocol.TType.STRING, 3.asInstanceOf[Short]))
+            if(bean.sortFields.isDefined){
+            val elem2 = bean.sortFields .get
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("sortFields", com.isuwang.org.apache.thrift.protocol.TType.STRING, 3.asInstanceOf[Short]))
             oprot.writeString(elem2)
             oprot.writeFieldEnd
             
@@ -95,19 +95,13 @@ import com.today.api.user.dto.serializer._;import com.today.api.user.request.ser
     }
     
       @throws[TException]
-      override def validate(bean: com.today.api.user.request.ModifyUserRequest): Unit = {
+      override def validate(bean: com.today.api.page.TPageRequest): Unit = {
       
-              if(bean.email == null)
-              throw new SoaException(SoaBaseCode.NotNull, "email字段不允许为空")
-            
-              if(bean.qq == null)
-              throw new SoaException(SoaBaseCode.NotNull, "qq字段不允许为空")
-            
     }
     
 
           @throws[TException]
-          override def toString(bean: com.today.api.user.request.ModifyUserRequest): String = if (bean == null) "null" else bean.toString
+          override def toString(bean: com.today.api.page.TPageRequest): String = if (bean == null) "null" else bean.toString
 
         }
         
