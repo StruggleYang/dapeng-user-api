@@ -138,7 +138,7 @@ class UserServiceImp extends UserService {
     **/
   override def changeUserIntegral(request: ChangeIntegralRequest): Int = {
 
-    val changeStatus: Boolean = userRepository.changeUserIntegral(
+    val _: Boolean = userRepository.changeUserIntegral(
       request.userId,
       request.integralPrice.toInt,
       request.integralType,
