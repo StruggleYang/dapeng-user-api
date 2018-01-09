@@ -4,11 +4,16 @@ import com.isuwang.dapeng.core.SoaException
 import com.today.api.user.enums.UserStatusEnum
 import com.today.api.user.request.FreezeUserRequest
 import com.today.api.user.response.FreezeUserResponse
+import com.today.service.commons.`implicit`.Implicits
 import com.today.service.commons.{Action, Assert}
 import com.today.service.user.action.sql.UserActionSql
 import com.today.service.user.query.sql.UserQuerySql
 
-class UserFreezeAction(request: FreezeUserRequest) extends Action[FreezeUserResponse]{
+/**
+  * 冻结账户
+  * @param request
+  */
+class UserFreezeAction(request: FreezeUserRequest) extends Action[FreezeUserResponse] {
 
   val statusList: List[Int] = List(
     UserStatusEnum.BLACK.id,
@@ -17,10 +22,13 @@ class UserFreezeAction(request: FreezeUserRequest) extends Action[FreezeUserResp
 
   override def preCheck: Unit = {
     Assert.assert(
-        !statusList
-        .contains(UserQuerySql.queryUserById(request.userId.toString)
-        .get
-        .userStatus.toInt),"100001" , "冻结失败，此用户不在冻结操作范围内!")
+      Implicits.CommonEx(
+        UserQuerySql
+          .queryUserById(request.userId.toString)
+          .get
+          .userStatus
+          .toInt)
+        .notIn(statusList), "100001", "冻结失败，此用户不在冻结操作范围内!")
   }
 
   override def action: FreezeUserResponse = {

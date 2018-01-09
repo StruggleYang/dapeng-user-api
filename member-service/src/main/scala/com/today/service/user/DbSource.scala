@@ -4,17 +4,17 @@ import javax.annotation.Resource
 import javax.sql.DataSource
 
 /**
-  *  dataSource
-  *  多数据源配置多个变量
+  * dataSource
+  * 可多数据源配置
   */
-object  DbSource {
-  var dataSource: DataSource = null
+object DbSource {
+  var mysqlData: DataSource = null
 }
 
-class DbSource{
+class DbSource {
   @Resource(name = "crm_dataSource")
-  def setDataSource(dataSource: DataSource): Unit = {
-    DbSource.dataSource = dataSource
+  def setDataSource(mysqlData: DataSource): Unit = {
+    DbSource.mysqlData = mysqlData
   }
 }
 

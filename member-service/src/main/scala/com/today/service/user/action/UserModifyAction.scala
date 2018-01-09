@@ -8,10 +8,14 @@ import com.today.service.commons.{Action, Assert}
 import com.today.service.user.action.sql.UserActionSql
 import com.today.util.user.UserUtil
 
-class UserModifyAction(request: ModifyUserRequest) extends Action[ModifyUserResponse]{
+/**
+  * 修改账户资料
+  * @param request
+  */
+class UserModifyAction(request: ModifyUserRequest) extends Action[ModifyUserResponse] {
   override def preCheck: Unit = {
-    Assert.assert(UserUtil.checkEmail(request.email),"100001" , "邮箱格式有误!")
-    Assert.assert(UserUtil.checkQQ(request.qq),"100001" , "QQ格式有误!")
+    Assert.assert(UserUtil.checkEmail(request.email), "100001", "邮箱格式有误!")
+    Assert.assert(UserUtil.checkQQ(request.qq), "100001", "QQ格式有误!")
   }
 
   override def action: ModifyUserResponse = {

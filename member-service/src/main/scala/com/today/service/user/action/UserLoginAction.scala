@@ -7,10 +7,14 @@ import com.today.service.commons.{Action, Assert}
 import com.today.service.user.action.sql.UserActionSql
 import com.today.util.user.UserUtil
 
-class UserLoginAction(request:LoginUserRequest) extends Action[LoginUserResponse]{
+/**
+  * 账户登录
+  * @param request
+  */
+class UserLoginAction(request: LoginUserRequest) extends Action[LoginUserResponse] {
   override def preCheck: Unit = {
-    Assert.assert(UserUtil.checkTel(request.telephone), "100001" , "账号格式有误!")
-    Assert.assert(UserUtil.checkPwd(request.passWord), "100001" , "密码格式有误!")
+    Assert.assert(UserUtil.checkTel(request.telephone), "100001", "账号格式有误!")
+    Assert.assert(UserUtil.checkPwd(request.passWord), "100001", "密码格式有误!")
   }
 
   override def action: LoginUserResponse = {

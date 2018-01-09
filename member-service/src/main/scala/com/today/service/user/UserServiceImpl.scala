@@ -8,7 +8,7 @@ import com.today.service.user.action.sql.UserActionSql
 import com.today.service.user.query.FindUserByPageQuery
 import com.today.service.user.query.sql.UserQuerySql
 
-class UserServiceImpl extends UserService{
+class UserServiceImpl extends UserService {
   override def registerUser(request: RegisterUserRequest): RegisterUserResponse = {
     new RegisterUserAction(request).execute
   }
